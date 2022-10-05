@@ -1,0 +1,63 @@
+{
+	"id": "d9fc1a6e-62fa-4912-94f5-2082d8f88bb1",
+	"name": "Dropbox",
+	"values": [
+		{
+			"key": "appKey",
+			"value": "u2mrwn3uxfhx8fy",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "appSecret",
+			"value": "vzuek6fdtrk7puv",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "baseUrl",
+			"value": "https://content.dropboxapi.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "path",
+			"value": "/downloads.txt",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "pathFolder",
+			"value": "",
+			"type": "default",
+			"enabled": false
+		},
+		{
+			"key": "token",
+			"value": "sl.BQnNf90HIQmYzq0D3xYB2TX4gwKP3OCDxBKk5tSQZuT-LqYUg3tQ5qv1AcpYerarabI2AzFNWD78yRHf9Abd7cg6F1tMbaZnWnNGvRSN2gujDjMzzfkoiWG5JX0jsBAKNEAVOmbcHYg",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "refresh_token",
+			"value": "7S7gdE3s-bsAAAAAAAAAAX73oEOtfRosKWQ-r1X18JKwym0VkDe1Btk0ZbT_g2hu",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "fileName",
+			"value": "downloads.txt",
+			"type": "default",
+			"enabled": false
+		},
+		{
+			"key": "pathToTheFile",
+			"value": "/",
+			"type": "default",
+			"enabled": false
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2022-10-05T17:51:58.221Z",
+	"_postman_exported_using": "Postman/9.31.16"
+}

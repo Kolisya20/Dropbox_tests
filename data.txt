@@ -1,0 +1,2 @@
+some data from file
+newman run Dropbox.postman_collection.json -e Dropbox.postman_environment.json -r htmlextra --reporter-htmlextra-title "Automated test reporting - Postman echo" --env-var "pathToTheFile"="/C:/Users/y_kolisnichenko/Desktop/Postman/data666.txt"

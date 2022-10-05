@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "93851446-9fcf-4880-bdbc-e34707f15344",
+		"name": "Dropbox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20266616"
+	},
+	"item": [
+		{
+			"name": "upload File",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//parse response data\r",
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"const pathFile = pm.environment.get(\"path\");\r",
+							"\r",
+							"pm.environment.set(\"file_metadata\", responseData);\r",
+							"pm.environment.set(\"fileId\", responseData.id);\r",
+							"\r",
+							"//check code status\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"path to downloaded file should contains file name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(pathFile).to.contain(responseData.name);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Dropbox-API-Arg",
+						"value": "{\"autorename\":false,\"mode\":\"add\",\"mute\":false,\"path\":\"{{path}}\",\"strict_conflict\":false}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/octet-stream"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/y_kolisnichenko/Desktop/Postman/data.txt"
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/2/files/upload",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"2",
+						"files",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list_folder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//parse response data\r",
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"const fileId = pm.environment.get(\"fileId\");\r",
+							"const downloadedFile_metadata = pm.environment.get(\"file_metadata\");\r",
+							"\r",
+							"//get element from entries by id\r",
+							"const file_metadata = responseData.entries.filter(item => item.id === fileId);\r",
+							"\r",
+							"//check code status \r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//check is there any entries\r",
+							"pm.test(\"entries should be\", function () {\r",
+							"    pm.expect(responseData.entries.length).not.to.eql(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"metadata of uploaded and exist files must be the same\", function () {\r",
+							"    //delete tag property\r",
+							"    delete file_metadata[0][\".tag\"];\r",
+							"    pm.expect(file_metadata[0]).to.eql(downloadedFile_metadata);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"include_deleted\":false,\r\n    \"include_has_explicit_shared_members\":false,\r\n    \"include_media_info\":false,\r\n    \"include_mounted_folders\":true,\r\n    \"include_non_downloadable_files\":true,\r\n    \"path\":\"\",\r\n    \"recursive\":false\r\n}"
+				},
+				"url": {
+					"raw": "https://api.dropboxapi.com/2/files/list_folder",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dropboxapi",
+						"com"
+					],
+					"path": [
+						"2",
+						"files",
+						"list_folder"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//parse response data\r",
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"const file_metadata = pm.environment.get(\"file_metadata\");\r",
+							"\r",
+							"//check code status \r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"metadata of downloaded i leleted file have to be the same\", function () {\r",
+							"    //delete tag property\r",
+							"    delete responseData[\".tag\"];\r",
+							"    pm.expect(responseData).to.eql(file_metadata);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"include_deleted\":false,\"include_has_explicit_shared_members\":false,\"include_media_info\":false,\"path\":\"{{path}}\"}\r\n"
+				},
+				"url": {
+					"raw": "https://api.dropboxapi.com/2/files/get_metadata",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dropboxapi",
+						"com"
+					],
+					"path": [
+						"2",
+						"files",
+						"get_metadata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//parse response data\r",
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"const file_metadata = pm.environment.get(\"file_metadata\");\r",
+							"\r",
+							"//check code status \r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//check if matadata deleted file is the same with downloaded\r",
+							"pm.test(\"metadata of downloaded i leleted file have to be the same\", function () {\r",
+							"    //delete tag property\r",
+							"    delete responseData.metadata[\".tag\"];\r",
+							"    pm.expect(responseData.metadata).to.eql(file_metadata);\r",
+							"});\r",
+							"\r",
+							"//clear all unnecessary variables\r",
+							"pm.environment.unset(\"fileId\");\r",
+							"pm.environment.unset(\"filePath\");\r",
+							"pm.environment.unset(\"content_hash\");\r",
+							"pm.environment.unset(\"file_metadata\");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"path\":\"{{path}}\"}"
+				},
+				"url": {
+					"raw": "https://api.dropboxapi.com/2/files/delete_v2",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dropboxapi",
+						"com"
+					],
+					"path": [
+						"2",
+						"files",
+						"delete_v2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"//send refresh tocken for automatically getting access one ",
+					"let keys = pm.environment.get(\"appKey\") + \":\" + pm.environment.get(\"appSecret\");",
+					"let encodedKeys = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(keys));",
+					"",
+					"const echoPostRequest = {",
+					"  url: 'https://api.dropbox.com/oauth2/token',",
+					"  method: 'POST',",
+					"  header: {",
+					"    \"Content-Type\": \"application/x-www-form-urlencoded\",",
+					"    \"Authorization\": `Basic ${encodedKeys}`",
+					"  },",
+					"  body: {",
+					"    mode: 'urlencoded',",
+					"    urlencoded: [",
+					"        {key: \"grant_type\", value: \"refresh_token\"},",
+					"        {key:\"refresh_token\", value: pm.environment.get(\"refresh_token\")},",
+					"    ]}",
+					"};",
+					"pm.sendRequest(echoPostRequest, function (err, res) {",
+					"    if (err === null) {",
+					"        console.log('Update the token')",
+					"        var responseJson = res.json();",
+					"        pm.environment.set('token', responseJson.access_token)",
+					"    }",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
